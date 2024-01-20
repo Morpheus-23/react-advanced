@@ -1,4 +1,9 @@
 import { Image, Text, Box, Flex } from "@chakra-ui/react";
+import moment from "moment";
+
+const formatEventDate = (date) => {
+  return moment(date).format("lll")
+};
 
 export const EventItem = ({ event, clickFn }) => {
   return (
@@ -21,23 +26,19 @@ export const EventItem = ({ event, clickFn }) => {
 
       <Flex direction="row" justify="center" flexWrap="wrap" mt={3}>
         <Text>Start time :</Text>
-        <Text ml={3}>{event.startTime}</Text>
+        <Text ml={3}>{formatEventDate(event.startTime)}</Text>
       </Flex>
       <Flex direction="row" justify="center" flexWrap="wrap" mt={3}>
         <Text>End time :</Text>
-        <Text ml={3}>{event.endTime}</Text>
+        <Text ml={3}>{formatEventDate(event.endTime)}</Text>
+        
       </Flex>
 
       <Flex direction="row" justify="center" flexWrap="wrap" mt={3}>
         <Text>Categories :</Text>
-        {event.categoryIds.map((mealType) => (
-          <Text
-  
-            ml={3}
-         
-           
-          >
-            {mealType}
+        {event.categoryIds.map((catId) => (
+          <Text key={catId} ml={3}>
+            {catId}
           </Text>
         ))}
       </Flex>
