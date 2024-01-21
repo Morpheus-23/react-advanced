@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Text, Input, Flex, Box } from "@chakra-ui/react";
 import { EventList } from "../components/EventList";
+import { CategoryContext } from "../Contexts";
 
 //fetch from server - use query??????????
 //display events
@@ -12,14 +13,22 @@ import { EventList } from "../components/EventList";
 
 export const EventsPage = () => {
   const [eventsList, setEventsList] = useState([]);
+  const [categories, setCategories] = useState([]);
+  // const categoryList =  useContext(CategoryContext);
 
   useEffect(() => {
     async function fetchData() {
       const response = await fetch("http://localhost:3000/events");
       const events = await response.json();
-      console.log("fetching :" + events);
       setEventsList(events);
     }
+    async function fetchCategories() {
+      const response = await fetch("http://localhost:3000/categories");
+      const categories = await response.json();
+      console.log("cats length="+categories.length);
+      setCategories(categories);
+    }
+    fetchCategories();
     fetchData();
   }, []);
 
@@ -40,7 +49,9 @@ export const EventsPage = () => {
           <Text pr="3">Search for events:</Text>
           <Input variant="filled" onChange={handleChange} w={400} />
         </Flex>
-        <EventList events={matchedEvents} />
+        <CategoryContext.Provider value={categories}>
+          <EventList events={matchedEvents} />
+        </CategoryContext.Provider>
       </Box>
     </>
   );

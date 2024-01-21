@@ -1,11 +1,26 @@
+import { useContext } from "react";
 import { Image, Text, Box, Flex } from "@chakra-ui/react";
 import moment from "moment";
+import { CategoryContext } from "../Contexts";
 
 const formatEventDate = (date) => {
-  return moment(date).format("lll")
+  return moment(date).format("lll");
 };
 
 export const EventItem = ({ event, clickFn }) => {
+  const categories = useContext(CategoryContext);
+  // console.log("categories from context in item:" + categories);
+
+  const filterCategories = (categories, eventCategoryIds) => {
+    const filtered = categories.filter((category) => {
+      console.log(categories);
+      console.log(eventCategoryIds);
+      return eventCategoryIds.indexOf(Number(category.id)) >= 0;
+    });
+    console.log(filtered);
+    return filtered;
+  };
+
   return (
     <Box
       onClick={() => clickFn(event)}
@@ -31,14 +46,13 @@ export const EventItem = ({ event, clickFn }) => {
       <Flex direction="row" justify="center" flexWrap="wrap" mt={3}>
         <Text>End time :</Text>
         <Text ml={3}>{formatEventDate(event.endTime)}</Text>
-        
       </Flex>
 
       <Flex direction="row" justify="center" flexWrap="wrap" mt={3}>
         <Text>Categories :</Text>
-        {event.categoryIds.map((catId) => (
-          <Text key={catId} ml={3}>
-            {catId}
+        {filterCategories(categories, event.categoryIds).map((cat) => (
+          <Text textTransform="capitalize" ml={3} key={cat.id}>
+            {cat.name}
           </Text>
         ))}
       </Flex>
