@@ -9,15 +9,11 @@ const formatEventDate = (date) => {
 
 export const EventItem = ({ event, clickFn }) => {
   const categories = useContext(CategoryContext);
-  // console.log("categories from context in item:" + categories);
-
+ 
   const filterCategories = (categories, eventCategoryIds) => {
     const filtered = categories.filter((category) => {
-      console.log(categories);
-      console.log(eventCategoryIds);
       return eventCategoryIds.indexOf(Number(category.id)) >= 0;
     });
-    console.log(filtered);
     return filtered;
   };
 

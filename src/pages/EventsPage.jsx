@@ -1,23 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Text, Input, Flex, Box } from "@chakra-ui/react";
-import { EventList } from "../components/EventList";
+import React, { useEffect, useState } from "react";
 import { CategoryContext } from "../Contexts";
-
-//fetch from server - use query??????????
-//display events
-//make clickable
-//add event page or modal
-//add event to server
-//search - done
-//filter
+import { Box, Flex, Text, Input, Checkbox } from "@chakra-ui/react";
+import { EventList } from "../components/EventList";
 
 export const EventsPage = () => {
   const [eventsList, setEventsList] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [searchField, setSearchField] = useState("");
   const [categories, setCategories] = useState([]);
-  // const categoryList =  useContext(CategoryContext);
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchEvents() {
       const response = await fetch("http://localhost:3000/events");
       const events = await response.json();
       setEventsList(events);
@@ -25,34 +18,70 @@ export const EventsPage = () => {
     async function fetchCategories() {
       const response = await fetch("http://localhost:3000/categories");
       const categories = await response.json();
-      console.log("cats length="+categories.length);
       setCategories(categories);
+      console.log(categories.find(({ id }) => Number(id) === 2).name);
+    }
+    async function fetchUsers() {
+      const response = await fetch("http://localhost:3000/users");
+      const users = await response.json();
+      setUsers(users);
     }
     fetchCategories();
-    fetchData();
+    fetchUsers();
+    fetchEvents();
   }, []);
 
-  const [searchField, setSearchField] = useState("");
+  const uniqueCategories = [
+    ...new Set(eventsList.flatMap((obj) => obj.categoryIds)),
+  ];
+
+  const [selectedFilters, setSelectedFilters] = useState([]);
 
   const matchedEvents = eventsList.filter((event) => {
     return event.title.toLowerCase().includes(searchField.toLowerCase());
   });
 
-  const handleChange = (event) => {
+  const filteredObjects = matchedEvents.filter((obj) =>
+    selectedFilters.every((filter) => obj.categoryIds.includes(filter))
+  );
+
+  const handleSearchChange = (event) => {
     setSearchField(event.target.value);
   };
 
+  const handleFilterChange = (categoryId) => {
+    setSelectedFilters((prevFilters) =>
+      prevFilters.includes(categoryId)
+        ? prevFilters.filter((filter) => filter !== categoryId)
+        : [...prevFilters, categoryId]
+    );
+  };
+
   return (
-    <>
-      <Box align="center">
-        <Flex justify="center" align="center">
-          <Text pr="3">Search for events:</Text>
-          <Input variant="filled" onChange={handleChange} w={400} />
+    <Box align="center">
+      <Flex mb={10} justify="center" align="center">
+        <Text pr="3">Search for events :</Text>
+        <Input variant="filled" onChange={handleSearchChange} w={400} />
+      </Flex>
+      <Flex justify="center" align="center">
+        <Text>Filter by category :</Text>
+        <Flex direction="row">
+          {uniqueCategories.map((categoryId) => (
+            <Checkbox
+              ml={5}
+              textTransform="capitalize"
+              key={categoryId}
+              isChecked={selectedFilters.includes(categoryId)}
+              onChange={() => handleFilterChange(categoryId)}
+            >
+              {categories.find(({ id }) => Number(id) === categoryId).name}
+            </Checkbox>
+          ))}
         </Flex>
-        <CategoryContext.Provider value={categories}>
-          <EventList events={matchedEvents} />
-        </CategoryContext.Provider>
-      </Box>
-    </>
+      </Flex>
+      <CategoryContext.Provider value={categories}>
+        <EventList events={filteredObjects} />
+      </CategoryContext.Provider>
+    </Box>
   );
 };
