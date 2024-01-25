@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { CategoryContext } from "../Contexts";
-import { Box, Flex, Text, Input, Checkbox } from "@chakra-ui/react";
+import { Box, Flex, Text, Input, Checkbox, Button } from "@chakra-ui/react";
 import { EventList } from "../components/EventList";
+import { AddEventModal } from "../components/AddEventModal";
+import { useDisclosure } from '@chakra-ui/react'
 
 export const EventsPage = () => {
   const [eventsList, setEventsList] = useState([]);
   const [users, setUsers] = useState([]);
   const [searchField, setSearchField] = useState("");
   const [categories, setCategories] = useState([]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     async function fetchEvents() {
       const response = await fetch("http://localhost:3000/events");
       const events = await response.json();
+      console.log("events:"+events.length);
       setEventsList(events);
     }
     async function fetchCategories() {
@@ -63,7 +67,7 @@ export const EventsPage = () => {
         <Text pr="3">Search for events :</Text>
         <Input variant="filled" onChange={handleSearchChange} w={400} />
       </Flex>
-      <Flex justify="center" align="center">
+      <Flex mb="5" justify="center" align="center">
         <Text>Filter by category :</Text>
         <Flex direction="row">
           {uniqueCategories.map((categoryId) => (
@@ -79,6 +83,12 @@ export const EventsPage = () => {
           ))}
         </Flex>
       </Flex>
+      <Box justify="right" align="right" maxWidth={"90%"}>
+        <Button onClick={onOpen} color="white" colorScheme="blue">
+          Add event
+        </Button>
+        <AddEventModal isOpen={isOpen} onClose={onClose} />
+      </Box>
       <CategoryContext.Provider value={categories}>
         <EventList events={filteredObjects} />
       </CategoryContext.Provider>
