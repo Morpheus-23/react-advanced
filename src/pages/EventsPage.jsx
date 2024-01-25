@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { CategoryContext } from "../Contexts";
 import { Box, Flex, Text, Input, Checkbox, Button } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 import { EventList } from "../components/EventList";
-import { AddEventModal } from "../components/AddEventModal";
-import { useDisclosure } from '@chakra-ui/react'
+import { useDisclosure } from "@chakra-ui/react";
 
 export const EventsPage = () => {
   const [eventsList, setEventsList] = useState([]);
-  const [users, setUsers] = useState([]);
   const [searchField, setSearchField] = useState("");
+
   const [categories, setCategories] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -16,7 +16,7 @@ export const EventsPage = () => {
     async function fetchEvents() {
       const response = await fetch("http://localhost:3000/events");
       const events = await response.json();
-      console.log("events:"+events.length);
+      console.log("events:" + events.length);
       setEventsList(events);
     }
     async function fetchCategories() {
@@ -25,13 +25,7 @@ export const EventsPage = () => {
       setCategories(categories);
       console.log(categories.find(({ id }) => Number(id) === 2).name);
     }
-    async function fetchUsers() {
-      const response = await fetch("http://localhost:3000/users");
-      const users = await response.json();
-      setUsers(users);
-    }
     fetchCategories();
-    fetchUsers();
     fetchEvents();
   }, []);
 
@@ -84,10 +78,11 @@ export const EventsPage = () => {
         </Flex>
       </Flex>
       <Box justify="right" align="right" maxWidth={"90%"}>
-        <Button onClick={onOpen} color="white" colorScheme="blue">
-          Add event
-        </Button>
-        <AddEventModal isOpen={isOpen} onClose={onClose} />
+        <Link to={`/event/add`}>
+          <Button color="white" colorScheme="blue">
+            Add Event
+          </Button>
+        </Link>
       </Box>
       <CategoryContext.Provider value={categories}>
         <EventList events={filteredObjects} />
