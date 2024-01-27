@@ -8,7 +8,6 @@ export const Root = () => {
   return (
     <Box>
       <AppTitleBanner />
-      <Navigation />
       <Outlet />
     </Box>
   );

@@ -1,6 +1,8 @@
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
+  FormControl,
+  FormLabel,
   Button,
   Center,
   Checkbox,
@@ -8,9 +10,10 @@ import {
   Flex,
   Input,
   Select,
+  VStack,
   Stack,
-  Text,
   Textarea,
+  Box,
   useToast,
 } from "@chakra-ui/react";
 
@@ -52,7 +55,6 @@ export const AddEventPage = () => {
   const [loading, setLoading] = useState(false);
   const [keyForm, setKeyForm] = useState(0);
 
-  // Get the current Date/time as a string for online check (minimum value)
   const getCurrentDateTime = () => {
     let date = new Date();
     return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
@@ -60,7 +62,6 @@ export const AddEventPage = () => {
       .slice(0, 16);
   };
 
-  // Convert the local-date/time to UTC date/time
   const convertLocalToUTC = (localDateString) => {
     let date = new Date(localDateString);
     return new Date(date.getTime()).toISOString();
@@ -140,127 +141,101 @@ export const AddEventPage = () => {
       >
         Add event
       </Center>
-      <Center width="100%">
-        <form id="form-add-event" key={keyForm} onSubmit={addEvent}>
+
+      <form id="form-add-event" key={keyForm} onSubmit={addEvent}>
+        <VStack justify="center" align="center">
           <Flex direction="column">
-            <Input
-              onChange={(e) => setTitle(e.target.value)}
-              required
-              placeholder="Event title"
-              _placeholder={{
-                opacity: 1,
-                color: "gray.700",
-              }}
-              variant="filled"
-              textColor={"black"}
-              mt={2}
-            />
-
-            <Textarea
-              onChange={(e) => setDescription(e.target.value)}
-              rows={4}
-              required
-              placeholder="Description"
-              _placeholder={{
-                opacity: 1,
-                color: "gray.700",
-              }}
-              variant="filled"
-              mt={2}
-            ></Textarea>
-
-            <Input
-              onChange={(e) => setImage(e.target.value)}
-              required
-              rows={1}
-              placeholder="Image URL"
-              _placeholder={{
-                opacity: 1,
-                color: "gray.700",
-              }}
-              variant="filled"
-              mt={2}
-            ></Input>
-
-            <Input
-              onChange={(e) => setLocation(e.target.value)}
-              required
-              rows={1}
-              placeholder="Location"
-              _placeholder={{
-                opacity: 1,
-                color: "gray.700",
-              }}
-              variant="filled"
-              mt={2}
-            ></Input>
-
-            <Text mt={2} ml={2} textColor={"gray.700"}>
-              Start date & time:
-            </Text>
-            <Input
-              type="datetime-local"
-              required
-              size="md"
-              onChange={(e) => setStartDateTime(e.target.value)}
-              min={getCurrentDateTime()}
-              variant="filled"
-              color={"gray.600"}
-              mt={0}
-            ></Input>
-
-            <Text mt={2} ml={2} textColor={"gray.700"}>
-              End date & time:
-            </Text>
-            <Input
-              type="datetime-local"
-              required
-              placeholder="Select Date and Time"
-              size="md"
-              onChange={(e) => setEndDateTime(e.target.value)}
-              min={getCurrentDateTime()}
-              variant="filled"
-              color={"gray.600"}
-              mt={0}
-            ></Input>
-
-            <CheckboxGroup colorScheme="blue" isRequired>
-              <Text mt={3} ml={2} textColor={"gray.700"}>
-                Select categories:
-              </Text>
-
-              <Stack spacing={7} direction={"row"} ml={2}>
-                {categories.map((category) => (
-                  <Checkbox
-                    key={category.id}
-                    textTransform="capitalize"
-                    ml={5}
-                    textColor={"gray.700"}
-                    onChange={handleCheckBox}
-                    name={category.name}
-                    id={category.id}
-                    value={category.name}
-                  >
-                    {category.name}
-                  </Checkbox>
+            <FormControl isRequired mb="5">
+              <FormLabel>Event title</FormLabel>
+              <Input
+                onChange={(e) => setTitle(e.target.value)}
+                variant="filled"
+                textColor={"black"}
+              />
+            </FormControl>
+            <FormControl isRequired mb="5">
+              <FormLabel>Description</FormLabel>
+              <Textarea
+                onChange={(e) => setDescription(e.target.value)}
+                rows={4}
+                required
+                variant="filled"
+              />
+            </FormControl>
+            <FormControl isRequired mb="5">
+              <FormLabel>Image URL</FormLabel>
+              <Input
+                onChange={(e) => setImage(e.target.value)}
+                required
+                rows={1}
+                variant="filled"
+              />
+            </FormControl>
+            <FormControl isRequired mb="5">
+              <FormLabel>Location</FormLabel>
+              <Input
+                onChange={(e) => setLocation(e.target.value)}
+                required
+                rows={1}
+                variant="filled"
+              ></Input>
+            </FormControl>
+            <FormControl isRequired mb="5">
+              <FormLabel>Start date & time</FormLabel>
+              <Input
+                type="datetime-local"
+                required
+                size="md"
+                onChange={(e) => setStartDateTime(e.target.value)}
+                min={getCurrentDateTime()}
+                variant="filled"
+              />
+            </FormControl>
+            <FormControl isRequired mb="5">
+              <FormLabel>Start date & time</FormLabel>
+              <Input
+                type="datetime-local"
+                required
+                size="md"
+                onChange={(e) => setEndDateTime(e.target.value)}
+                min={getCurrentDateTime()}
+                variant="filled"
+              />
+            </FormControl>
+            <Flex direction="column" mb={5}>
+              <Box>Select categories</Box>
+              <CheckboxGroup colorScheme="blue" isRequired>
+                <Stack spacing={7} direction={"row"} ml={2}>
+                  {categories.map((category) => (
+                    <Checkbox
+                      key={category.id}
+                      textTransform="capitalize"
+                      ml={5}
+                      textColor={"gray.700"}
+                      onChange={handleCheckBox}
+                      name={category.name}
+                      id={category.id}
+                      value={category.name}
+                    >
+                      {category.name}
+                    </Checkbox>
+                  ))}
+                </Stack>
+              </CheckboxGroup>
+            </Flex>
+            <Flex direction="column" mb={5}>
+              <Box>Select user</Box>
+              <Select
+                variant="filled"
+                onChange={(e) => setUserId(Number(e.target.value))}
+              >
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
                 ))}
-              </Stack>
-            </CheckboxGroup>
-
-            <Select
-              placeholder="Select user"
-              variant="filled"
-              textColor={"grey.700"}
-              onChange={(e) => setUserId(Number(e.target.value))}
-              isRequired
-              mt={5}
-            >
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name}
-                </option>
-              ))}
-            </Select>
+              </Select>
+            </Flex>
           </Flex>
 
           <Center>
@@ -290,8 +265,8 @@ export const AddEventPage = () => {
               Cancel
             </Button>
           </Center>
-        </form>
-      </Center>
+        </VStack>
+      </form>
     </>
   );
 };

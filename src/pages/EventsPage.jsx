@@ -10,20 +10,17 @@ export const EventsPage = () => {
   const [searchField, setSearchField] = useState("");
 
   const [categories, setCategories] = useState([]);
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     async function fetchEvents() {
       const response = await fetch("http://localhost:3000/events");
       const events = await response.json();
-      console.log("events:" + events.length);
       setEventsList(events);
     }
     async function fetchCategories() {
       const response = await fetch("http://localhost:3000/categories");
       const categories = await response.json();
       setCategories(categories);
-      console.log(categories.find(({ id }) => Number(id) === 2).name);
     }
     fetchCategories();
     fetchEvents();
