@@ -95,7 +95,7 @@ export const EventPage = () => {
           objectFit={"cover"}
           objectPosition={"center"}
         />
-        <Text fontSize='xl' mt="3" fontWeight="semibold" align="center">
+        <Text fontSize="xl" mt="3" fontWeight="semibold" align="center">
           {event.title}
         </Text>
         <Text fontWeight="semibold" mt="3" align="center">
@@ -104,17 +104,26 @@ export const EventPage = () => {
 
         <Flex direction="row" justify="center" flexWrap="wrap" mt={3}>
           <Text>Start time :</Text>
-          <Text fontWeight="semibold" ml={3}>{formatEventDate(event.startTime)}</Text>
+          <Text fontWeight="semibold" ml={3}>
+            {formatEventDate(event.startTime)}
+          </Text>
         </Flex>
         <Flex direction="row" justify="center" flexWrap="wrap" mt={3}>
           <Text>End time :</Text>
-          <Text fontWeight="semibold" ml={3}>{formatEventDate(event.endTime)}</Text>
+          <Text fontWeight="semibold" ml={3}>
+            {formatEventDate(event.endTime)}
+          </Text>
         </Flex>
 
         <Flex direction="row" justify="center" flexWrap="wrap" mt={3}>
           <Text>Categories :</Text>
           {filterCategories(categories, event.categoryIds).map((cat) => (
-            <Text fontWeight="semibold" textTransform="capitalize" ml={3} key={cat.id}>
+            <Text
+              fontWeight="semibold"
+              textTransform="capitalize"
+              ml={3}
+              key={cat.id}
+            >
               {cat.name}
             </Text>
           ))}
@@ -125,8 +134,9 @@ export const EventPage = () => {
           {users
             .filter((user) => user.id == currentEvent.createdBy)
             .map((user) => (
-              <VStack>
-                <Image borderRadius={"lg"}
+              <VStack key={user.id}>
+                <Image
+                  borderRadius={"lg"}
                   key={() => user.name + user.id}
                   src={user.image}
                   alt={user.name}
